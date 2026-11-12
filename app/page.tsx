@@ -7,7 +7,11 @@ export const dynamic = "force-dynamic";
 
 // Only a server-side session check decides what gets rendered. Nothing from the app
 // is in the HTML until the cookie verifies.
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ demo?: string | string[] }>;
+}) {
   if (!getAppPassword()) {
     return (
       <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-5 py-10">
@@ -19,6 +23,10 @@ export default async function Page() {
   }
   if (await hasValidSession()) {
     return <Workspace />;
+  }
+  const { demo } = await searchParams;
+  if (demo === "1") {
+    return <Workspace demo />;
   }
   return <LoginForm />;
 }

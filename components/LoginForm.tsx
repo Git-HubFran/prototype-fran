@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -64,6 +65,15 @@ export function LoginForm() {
             {busy ? "Checking…" : "Sign in"}
           </button>
         </form>
+        <div className="space-y-2 border-t border-line pt-6">
+          <p className="text-sm text-muted">Just looking? Try the demo with a sample contract.</p>
+          <Link
+            href="/?demo=1"
+            className="block w-full rounded-lg border border-line bg-surface px-5 py-2.5 text-center text-sm font-medium text-ink-text transition-colors hover:bg-paper"
+          >
+            Try the demo
+          </Link>
+        </div>
       </div>
     </main>
   );

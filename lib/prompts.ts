@@ -44,3 +44,6 @@ export function summaryUserMessage(contract: string): string {
 export function chatSystemWithContract(contract: string): string {
   return `${CHAT_SYSTEM}\n\n<contract>\n${contract}\n</contract>`;
 }
+
+// Added for public demo chat only. This is a prompt instruction, not a hard guarantee.
+export const DEMO_SCOPE_NOTE = `This is the public demo. The contract above is a fictional sample. Answer only questions about that sample. For anything else, say that the demo only answers questions about the sample contract, and do not answer it.`;

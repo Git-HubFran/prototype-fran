@@ -11,6 +11,13 @@ export const MAX_TURN_CHARS = 8_000;
 
 export type ParseResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
+// The last X-Forwarded-For entry is the one the nearest proxy saw. The first entry is
+// whatever the client sent, so it can be forged to dodge a limit.
+export function clientIp(req: Request): string {
+  const forwarded = req.headers.get("x-forwarded-for")?.split(",").pop()?.trim();
+  return forwarded || "unknown";
+}
+
 export async function readJson(req: Request): Promise<unknown> {
   try {
     return await req.json();

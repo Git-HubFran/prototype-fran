@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import type Anthropic from "@anthropic-ai/sdk";
 import { MODEL, extractText, getClient } from "@/lib/anthropic";
-import { chatSystemWithContract } from "@/lib/prompts";
+import { DEMO_SCOPE_NOTE, chatSystemWithContract } from "@/lib/prompts";
 import { extractJsonObject, parseChatAnswer } from "@/lib/parse";
 import { errorResponse, readChatInput, readContract, readJson } from "@/lib/http";
-import { hasValidSession } from "@/lib/auth";
+import { accessMode, demoQuotaBlock } from "@/lib/access";
 
 // Stateless: the client sends the contract and prior turns each time, so the server
 // keeps nothing between requests.
@@ -12,11 +12,12 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
-  if (!(await hasValidSession())) {
+  const body = await readJson(req);
+  const mode = await accessMode(body);
+  if (!mode) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });
   }
 
-  const body = await readJson(req);
   const contract = readContract(body);
   if (!contract.ok) {
     return NextResponse.json({ error: contract.error }, { status: 400 });
@@ -24,6 +25,11 @@ export async function POST(req: Request) {
   const chat = readChatInput(body);
   if (!chat.ok) {
     return NextResponse.json({ error: chat.error }, { status: 400 });
+  }
+
+  if (mode === "demo") {
+    const blocked = demoQuotaBlock(req);
+    if (blocked) return NextResponse.json({ error: blocked }, { status: 429 });
   }
 
   // The first message must be from the user, so drop any leading assistant turns.
@@ -44,7 +50,10 @@ export async function POST(req: Request) {
       system: [
         {
           type: "text",
-          text: chatSystemWithContract(contract.value),
+          text:
+            mode === "demo"
+              ? `${chatSystemWithContract(contract.value)}\n\n${DEMO_SCOPE_NOTE}`
+              : chatSystemWithContract(contract.value),
           cache_control: { type: "ephemeral" },
         },
       ],

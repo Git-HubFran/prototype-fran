@@ -1,17 +1,10 @@
 import { NextResponse } from "next/server";
 import { SESSION_COOKIE, getAppPassword, passwordMatches, sessionCookieOptions, sessionToken } from "@/lib/auth";
 import { clearFailures, recordFailure, retryAfterSeconds } from "@/lib/rate-limit";
-import { readJson } from "@/lib/http";
+import { clientIp, readJson } from "@/lib/http";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-// The last X-Forwarded-For entry is the one the nearest proxy saw. The first entry is
-// whatever the client sent, so it can be forged to dodge the limit.
-function clientIp(req: Request): string {
-  const forwarded = req.headers.get("x-forwarded-for")?.split(",").pop()?.trim();
-  return forwarded || "unknown";
-}
 
 export async function POST(req: Request) {
   const password = getAppPassword();
