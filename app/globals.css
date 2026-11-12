@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Fonts are system stacks rather than a hosted webfont, so the
+ * build does not depend on a network fetch and the page renders immediately.
+ */
+@theme {
+  --color-paper: #f7f5f0;
+  --color-surface: #ffffff;
+  --color-ink: #1f3a5f;
+  --color-ink-deep: #152943;
+  --color-ink-wash: #e9eef5;
+  --color-ink-text: #1c2430;
+  --color-muted: #5b6474;
+  --color-line: #e3ded2;
+
+  --color-flag: #b42318;
+  --color-flag-wash: #fdf0ee;
+  --color-caution: #9a6100;
+  --color-caution-wash: #fdf4df;
+  --color-verified: #2d6a4f;
+  --color-verified-wash: #e8f3ed;
+
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Charter", "Georgia", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
